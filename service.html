@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>แจ้งซ่อม / ขอเข้ารับบริการ — Advance Plus</title>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #15803d; --primary-light: #22c55e; --secondary: #166534;
+      --bg-color: #f3f6f4; --card-bg: #ffffff; --text-main: #1a2e1a;
+      --text-muted: #4b6b4b; --border: #d1e8d1; --error: #ef4444;
+      --shadow: 0 20px 40px rgba(21, 128, 61, 0.08);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Kanit', sans-serif; }
+    body {
+      background: var(--bg-color);
+      background-image: radial-gradient(circle at top right, #dcfce7 0%, transparent 40%), radial-gradient(circle at bottom left, #bbf7d0 0%, transparent 40%);
+      min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 3rem 1rem; color: var(--text-main);
+    }
+    .card {
+      background: var(--card-bg); width: 100%; max-width: 540px;
+      border-radius: 24px; box-shadow: var(--shadow); overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.8);
+      animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-6px);}40%{transform:translateX(6px);}60%{transform:translateX(-4px);}80%{transform:translateX(4px);}}
+    .header {
+      background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+      padding: 2.5rem 2rem; text-align: center; color: #fff; position: relative;
+    }
+    .header::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, #fde047, #f59e0b); }
+    .header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.4rem; letter-spacing: 0.02em; }
+    .header p { font-size: 0.95rem; font-weight: 300; opacity: 0.9; }
+    .body { padding: 2.5rem 2rem; }
+    .fg { margin-bottom: 1.4rem; }
+    .fg:last-child { margin-bottom: 0; }
+    label { display: block; font-size: 0.9rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; }
+    label .req { color: var(--error); }
+    label .opt { font-size: 0.75rem; color: #9ab89a; font-weight: 400; margin-left: 4px; }
+    input[type=text], input[type=tel], select, textarea {
+      width: 100%; padding: 0.85rem 1.2rem;
+      background: #f8faf9; border: 2px solid var(--border); border-radius: 12px;
+      color: var(--text-main); font-size: 1rem; outline: none; transition: all 0.3s ease;
+    }
+    textarea { resize: vertical; min-height: 100px; line-height: 1.5; }
+    input:focus, select:focus, textarea:focus { border-color: var(--primary-light); box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.15); background: #fff; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 480px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    .hidden { display: none !important; }
+
+    .upload-area {
+      border: 2px dashed var(--border); border-radius: 12px; padding: 1.5rem;
+      text-align: center; cursor: pointer; background: #f8faf9; transition: all 0.3s ease;
+    }
+    .upload-area:hover { border-color: var(--primary-light); background: #f0fdf4; }
+    .preview-zone { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.8rem; }
+    .thumb-wrapper { position: relative; display: inline-block; }
+    .preview-thumb { width: 70px; height: 70px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border); }
+    .remove-btn {
+      position: absolute; top: -6px; right: -6px; background: var(--error); color: white;
+      border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 14px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .btn {
+      width: 100%; padding: 1rem; margin-top: 1.5rem;
+      background: var(--primary); border: none; border-radius: 14px; color: #fff;
+      font-size: 1.15rem; font-weight: 700; letter-spacing: 0.03em;
+      cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(21, 128, 61, 0.3);
+    }
+    .btn:hover { background: var(--secondary); transform: translateY(-3px); box-shadow: 0 8px 25px rgba(21, 128, 61, 0.4); }
+    .btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+    .err-msg { font-size: 0.8rem; color: var(--error); margin-top: 0.4rem; display: none; font-weight: 500; }
+    .field-err { border-color: var(--error) !important; background: #fef2f2 !important; }
+    .show-err { display: block; }
+    .success-screen { display: none; text-align: center; padding: 4rem 2rem; }
+    .success-icon { font-size: 4.5rem; margin-bottom: 1.5rem; animation: pop 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
+    @keyframes pop { 0% { transform: scale(0); } 70% { transform: scale(1.1); } 100% { transform: scale(1); } }
+    .success-screen h2 { color: var(--primary); margin-bottom: 0.8rem; font-size: 1.8rem; }
+    .success-screen p { color: var(--text-muted); font-size: 1rem; line-height: 1.7; }
+    .btn-back { display: inline-block; margin-top: 2rem; padding: 0.8rem 2rem; border-radius: 10px; background: #f3f6f4; color: var(--secondary); font-weight: 600; text-decoration: none; transition: 0.2s; cursor:pointer; border:none; font-family:'Kanit',sans-serif; font-size:.95rem; }
+    .btn-back:hover { background: var(--border); }
+    .honeypot { display: none !important; position: absolute; left: -9999px; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div id="formScreen">
+    <div class="header">
+      <h1>แจ้งซ่อม / ขอเข้ารับบริการ</h1>
+      <p>Advance Plus &bull; Green Energy Solutions</p>
+    </div>
+
+    <div class="body">
+      <input type="text" id="bot_trap" class="honeypot" tabindex="-1" autocomplete="off">
+
+      <div class="fg">
+        <label>ต้องการ <span class="req">*</span></label>
+        <select id="s_type" onchange="onTypeChange()">
+          <option value="" disabled selected>— เลือกสิ่งที่ต้องการ —</option>
+          <option value="CI1">ติดตั้งระบบใหม่ (มากกว่า 4 จุด) — CI1</option>
+          <option value="CI2">ติดตั้งระบบใหม่ (1-4 จุด) — CI2</option>
+          <option value="CI3">ติดตั้งสแกนนิ้ว / สแกนใบหน้า / คีย์การ์ด — CI3</option>
+          <option value="CS1">แจ้งซ่อม / ขอบริการที่หน้างาน — CS1</option>
+          <option value="CS2">แจ้งซ่อม / ปรึกษาปัญหาออนไลน์ — CS2</option>
+          <option value="CH">ลูกค้าช่าง (สั่งซื้อ/รับบริการแบบช่าง) — CH</option>
+          <option value="CR">ลูกค้าปลีก / ลูกค้าส่ง (สั่งซื้ออุปกรณ์) — CR</option>
+          <option value="CW">อื่นๆ (ระบุเอง) — CW</option>
+        </select>
+        <div style="font-size:.72rem; color:var(--text-muted); margin-top:.4rem;">
+          CI = ติดตั้ง &nbsp;·&nbsp; CS = ซ่อม/บริการ &nbsp;·&nbsp; CH = ลูกค้าช่าง &nbsp;·&nbsp; CR = ปลีก/ส่ง &nbsp;·&nbsp; CW = อื่นๆ
+        </div>
+        <div class="err-msg" id="err_type">⚠ กรุณาเลือกสิ่งที่ต้องการ</div>
+      </div>
+      <div class="fg hidden" id="fg_type_other">
+        <label>ระบุสิ่งที่ต้องการ <span class="req">*</span></label>
+        <input type="text" id="s_type_other" placeholder="พิมพ์สิ่งที่ต้องการ...">
+        <div class="err-msg" id="err_type_other">⚠ กรุณาระบุสิ่งที่ต้องการ</div>
+      </div>
+
+      <div class="fg">
+        <label>ระบบ / อุปกรณ์ที่เกี่ยวข้อง <span class="req">*</span></label>
+        <select id="s_main" onchange="onMainChange()">
+          <option value="" disabled selected>— เลือกระบบ —</option>
+          <option>กล้อง Digital</option>
+          <option>กล้อง Analog</option>
+          <option>เครื่องบันทึก NVR</option>
+          <option>ระบบ Network</option>
+          <option>เครื่องสแกนนิ้วมือ</option>
+          <option value="อื่นๆ">อื่นๆ (ระบุเอง)</option>
+        </select>
+        <div class="err-msg" id="err_main">⚠ กรุณาเลือกระบบ / อุปกรณ์</div>
+      </div>
+      <div class="fg hidden" id="fg_main_other">
+        <label>ระบุระบบ / อุปกรณ์ <span class="req">*</span></label>
+        <input type="text" id="s_main_other" placeholder="พิมพ์ชื่อระบบ / อุปกรณ์...">
+        <div class="err-msg" id="err_main_other">⚠ กรุณาระบุระบบ / อุปกรณ์</div>
+      </div>
+
+      <!-- ติดตั้ง (CI) -->
+      <div id="grp_install" class="hidden">
+        <div class="fg">
+          <label>ลักษณะหน้างาน <span class="req">*</span></label>
+          <select id="s_site" onchange="onSiteChange()">
+            <option value="" disabled selected>— เลือกลักษณะหน้างาน —</option>
+            <option>ที่พักอาศัย (บ้าน / คอนโด / หมู่บ้าน)</option>
+            <option>ธุรกิจ (ออฟฟิศ / ร้านค้า / อาคารพาณิชย์)</option>
+            <option>อุตสาหกรรม (โรงงาน / โกดัง / ลานจอด)</option>
+            <option>ไซต์งาน / โครงการ</option>
+            <option value="อื่นๆ">อื่นๆ (ระบุเอง)</option>
+          </select>
+          <div class="err-msg" id="err_site">⚠ กรุณาเลือกลักษณะหน้างาน</div>
+        </div>
+        <div class="fg hidden" id="fg_site_other">
+          <label>ระบุลักษณะหน้างาน <span class="req">*</span></label>
+          <input type="text" id="s_site_other" placeholder="ระบุลักษณะหน้างาน...">
+          <div class="err-msg" id="err_site_other">⚠ กรุณาระบุลักษณะหน้างาน</div>
+        </div>
+
+        <div class="fg">
+          <label>จำนวนจุด <span class="req">*</span></label>
+          <select id="s_points" onchange="onPointsChange()">
+            <option value="" disabled selected>— เลือกจำนวนจุด —</option>
+            <option>1</option><option>2</option><option>3</option><option>4</option>
+            <option>5</option><option>6</option><option>8</option><option>10</option>
+            <option>12</option><option>16</option><option>20</option><option>24</option>
+            <option>32</option><option value="อื่นๆ">อื่นๆ (ระบุเอง)</option>
+          </select>
+          <div class="err-msg" id="err_points">⚠ กรุณาเลือกจำนวนจุด</div>
+        </div>
+        <div class="fg hidden" id="fg_points_other">
+          <label>ระบุจำนวนจุด <span class="req">*</span></label>
+          <input type="text" id="s_points_other" placeholder="พิมพ์จำนวนจุด..." inputmode="numeric">
+          <div class="err-msg" id="err_points_other">⚠ กรุณาระบุจำนวนจุด</div>
+        </div>
+      </div>
+
+      <!-- ซ่อม/บริการ (CS/CW) -->
+      <div id="grp_service" class="hidden">
+        <div class="fg">
+          <label>ปัญหา / อาการ <span class="req">*</span></label>
+          <select id="s_sub" onchange="onSubChange()">
+            <option value="" disabled selected>— เลือกระบบก่อน —</option>
+          </select>
+          <div class="err-msg" id="err_sub">⚠ กรุณาเลือกปัญหา / อาการ</div>
+        </div>
+        <div class="fg hidden" id="fg_sub_other">
+          <label>ระบุปัญหา / อาการ <span class="req">*</span></label>
+          <input type="text" id="s_sub_other" placeholder="พิมพ์อาการ / ปัญหา...">
+          <div class="err-msg" id="err_sub_other">⚠ กรุณาระบุปัญหา / อาการ</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="fg">
+          <label>ช่องทางการติดต่อ <span class="req">*</span></label>
+          <select id="s_channel" onchange="onChannelChange()">
+            <option value="" disabled selected>— เลือกช่องทาง —</option>
+            <option value="หน้าร้าน">หน้าร้าน</option>
+            <option value="Facebook">Facebook</option>
+            <option value="Line Official">Line / Line OA</option>
+            <option value="โทรศัพท์">โทรศัพท์</option>
+            <option value="อื่นๆ">อื่นๆ (ระบุเอง)</option>
+          </select>
+          <div class="err-msg" id="err_channel">⚠ เลือกช่องทาง</div>
+        </div>
+        <div class="fg">
+          <label>เบอร์โทรศัพท์ <span class="req">*</span> <span id="count_phone" style="float:right; font-size:0.75rem; color:#ef4444; font-weight:bold;">0/10</span></label>
+          <input type="text" id="s_phone" placeholder="0XXXXXXXXX" maxlength="10" inputmode="numeric">
+          <div class="err-msg" id="err_phone">⚠ กรุณาระบุเบอร์โทรศัพท์ให้ครบ 10 หลัก</div>
+        </div>
+      </div>
+      <div class="fg hidden" id="fg_channel_other">
+        <label>ระบุช่องทางการติดต่อ <span class="req">*</span></label>
+        <input type="text" id="s_channel_other" placeholder="พิมพ์ช่องทางการติดต่อ...">
+        <div class="err-msg" id="err_channel_other">⚠ กรุณาระบุช่องทางการติดต่อ</div>
+      </div>
+
+      <div class="fg">
+        <label>ชื่อ - นามสกุล <span class="req">*</span></label>
+        <input type="text" id="s_name" placeholder="ชื่อผู้ติดต่อ" autocomplete="name">
+        <div class="err-msg" id="err_name">⚠ กรุณาระบุชื่อ</div>
+      </div>
+
+      <div class="fg">
+        <label>รายละเอียดเพิ่มเติม <span class="opt">(ไม่บังคับ)</span></label>
+        <textarea id="s_note" placeholder="อธิบายเพิ่มเติม เช่น เวลาที่สะดวกให้เข้าไปดูหน้างาน, จุดสังเกตของสถานที่..."></textarea>
+      </div>
+
+      <div class="fg">
+        <label>แนบรูปภาพ <span class="opt">(ไม่บังคับ สูงสุด 5 รูป)</span></label>
+        <div class="upload-area" onclick="document.getElementById('s_images').click()">
+          📷 แตะเพื่อเลือกรูปภาพ (เช่น รูปหน้างาน, รูปอุปกรณ์ที่มีปัญหา)
+        </div>
+        <input type="file" id="s_images" accept="image/*" multiple class="hidden" onchange="handleImageSelection(this)">
+        <div class="preview-zone" id="s_preview"></div>
+      </div>
+
+      <button class="btn" id="submitBtn" onclick="submitService()">ส่งข้อมูล</button>
+    </div>
+  </div>
+
+  <div class="success-screen" id="successScreen">
+    <div class="success-icon">✅</div>
+    <h2>ส่งข้อมูลเรียบร้อยแล้ว</h2>
+    <p>ขอบคุณครับ ทีมงาน Advance Plus ได้รับข้อมูลของคุณแล้ว<br>เจ้าหน้าที่จะติดต่อกลับโดยเร็วที่สุด</p>
+    <button class="btn-back" onclick="location.reload()">ส่งข้อมูลอีกครั้ง</button>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+  firebase.initializeApp({
+    apiKey: "AIzaSyDgyBh_OWjnIpok3gR9LUsT0CAqGK6FVao",
+    authDomain: "advance-plus-form.firebaseapp.com",
+    projectId: "advance-plus-form",
+    storageBucket: "advance-plus-form.firebasestorage.app",
+    messagingSenderId: "130477031774",
+    appId: "1:130477031774:web:09345e091812be63d04fcf"
+  });
+  const db = firebase.firestore();
+
+  document.getElementById('s_phone').addEventListener('input', function () {
+    this.value = this.value.replace(/\D/g, '').slice(0, 10);
+    document.getElementById('count_phone').innerText = this.value.length + '/10';
+    document.getElementById('count_phone').style.color = this.value.length === 10 ? '#16a34a' : '#ef4444';
+  });
+
+  // ── หัวข้อปัญหา ตามระบบที่เลือก (เหมือนระบบหลังบ้าน) ──
+  const SUB_CATS = {
+    'กล้อง Digital': ['กล้องดับ (น้อยกว่า 4 ตัว)','กล้องดับ (มากกว่า 4 ตัว)','กล้องเสีย','กล้องมีเสียงร้อง','กล้องติดๆ ดับๆ','กล้องไม่ออนไลน์','ดูย้อนหลังไม่ได้','ภาพเบลอ','สัญญาณหลุด','ภาพไม่ขึ้น'],
+    'กล้อง Analog':  ['กล้องดับ (น้อยกว่า 4 ตัว)','กล้องดับ (มากกว่า 4 ตัว)','กล้องเสีย','กล้องมีเสียงร้อง','กล้องติดๆ ดับๆ','กล้องไม่ออนไลน์','ดูย้อนหลังไม่ได้','ภาพเบลอ','สัญญาณหลุด','สัญญาณรบกวน'],
+    'เครื่องบันทึก NVR': ['ไฟไม่ขึ้น','เครื่องพัง','HDD Error','Adapter เสีย','สาย SATA มีปัญหา','บันทึกไม่ได้','ภาพไม่แสดง'],
+    'ระบบ Network':  ['อินเทอร์เน็ตขัดข้อง','สัญญาณ Wi-Fi หลุด','อุปกรณ์ไม่ออนไลน์','Port / Switch เสีย'],
+    'เครื่องสแกนนิ้วมือ': ['สแกนนิ้ว / สแกนใบหน้าไม่ผ่าน', 'เครื่องดับ / เปิดไม่ติด / ไม่มีไฟเข้า', 'ดึงข้อมูลเวลาไม่ได้ / หลุดเครือข่าย LAN', 'กลอนแม่เหล็กประตูไม่ล็อค / ประตูล็อคค้าง', 'ปุ่มกดออก (Exit Switch) ไม่ทำงาน', 'ทาบการ์ด / คีย์การ์ดไม่ทำงาน'],
+    'อื่นๆ': ['แจ้งซ่อมทั่วไป', 'สอบถามข้อมูล', 'ขอใบเสนอราคา', 'สั่งซื้ออุปกรณ์เพิ่ม']
+  };
+
+  function _show(id, on) { document.getElementById(id).classList.toggle('hidden', !on); }
+  function _clearErr(id) {
+    const el = document.getElementById(id), err = document.getElementById('err_' + id.replace('s_',''));
+    if (el) el.classList.remove('field-err');
+    if (err) err.classList.remove('show-err');
+  }
+
+  function onTypeChange() {
+    _clearErr('s_type');
+    const val = document.getElementById('s_type').value;
+    const isInstall = val.startsWith('CI');
+    _show('grp_install', isInstall);
+    _show('grp_service', !isInstall);
+    _show('fg_type_other', val === 'CW');
+    // รีเซ็ตตัวเลือกฝั่งที่ซ่อนไว้
+    if (isInstall) {
+      document.getElementById('s_sub').innerHTML = '<option value="" disabled selected>— เลือกระบบก่อน —</option>';
+    } else {
+      document.getElementById('s_site').value = '';
+      document.getElementById('s_points').value = '';
+      _show('fg_site_other', false);
+      _show('fg_points_other', false);
+    }
+    // เผื่อผู้ใช้เลือกระบบไว้ก่อนแล้ว ให้ rebuild sub list
+    onMainChange(true);
+  }
+
+  function onChannelChange() {
+    _clearErr('s_channel');
+    _show('fg_channel_other', document.getElementById('s_channel').value === 'อื่นๆ');
+  }
+
+  function onMainChange(skipClear) {
+    if (!skipClear) _clearErr('s_main');
+    const val = document.getElementById('s_main').value;
+    _show('fg_main_other', val === 'อื่นๆ');
+
+    const type = document.getElementById('s_type').value;
+    if (type && !type.startsWith('CI')) {
+      const subSel = document.getElementById('s_sub');
+      const list = SUB_CATS[val] || SUB_CATS['อื่นๆ'];
+      subSel.innerHTML = '<option value="" disabled selected>— เลือกปัญหา / อาการ —</option>' +
+        list.map(x => `<option>${x}</option>`).join('') +
+        '<option value="อื่นๆ">อื่นๆ (ระบุเอง)</option>';
+    }
+  }
+
+  function onSiteChange() {
+    _clearErr('s_site');
+    _show('fg_site_other', document.getElementById('s_site').value === 'อื่นๆ');
+  }
+  function onPointsChange() {
+    _clearErr('s_points');
+    _show('fg_points_other', document.getElementById('s_points').value === 'อื่นๆ');
+  }
+  function onSubChange() {
+    _clearErr('s_sub');
+    _show('fg_sub_other', document.getElementById('s_sub').value === 'อื่นๆ');
+  }
+
+  let selectedImages = [];
+  const MAX_IMAGES = 5;
+
+  function handleImageSelection(input) {
+    const files = Array.from(input.files);
+    const available = MAX_IMAGES - selectedImages.length;
+    if (available <= 0) { alert('แนบรูปได้สูงสุด ' + MAX_IMAGES + ' รูปครับ'); input.value = ''; return; }
+    const toAdd = files.slice(0, available);
+    selectedImages = [...selectedImages, ...toAdd];
+    input.value = ''; renderPreviews();
+  }
+  function removeImage(index) {
+    selectedImages.splice(index, 1);
+    renderPreviews();
+  }
+  function renderPreviews() {
+    const container = document.getElementById('s_preview'); container.innerHTML = '';
+    selectedImages.forEach((file, index) => {
+      const url = URL.createObjectURL(file);
+      const div = document.createElement('div'); div.className = 'thumb-wrapper';
+      div.innerHTML = `<img src="${url}" class="preview-thumb"><button class="remove-btn" onclick="removeImage(${index})">×</button>`;
+      container.appendChild(div);
+    });
+  }
+
+  async function compressImage(file, maxKB = 200) {
+    return new Promise(resolve => {
+      const img = new Image(), url = URL.createObjectURL(file);
+      img.onload = () => {
+        const c = document.createElement('canvas');
+        let w = img.width, h = img.height, mp = 1200;
+        if (w > mp || h > mp) { const r = Math.min(mp / w, mp / h); w = Math.round(w * r); h = Math.round(h * r); }
+        c.width = w; c.height = h; c.getContext('2d').drawImage(img, 0, 0, w, h);
+        let q = 0.85;
+        const go = () => {
+          const d = c.toDataURL('image/jpeg', q);
+          if (Math.round(d.length * 3 / 4 / 1024) <= maxKB || q <= 0.3) { URL.revokeObjectURL(url); resolve({ name: file.name, data: d, type: 'image/jpeg' }); }
+          else { q -= 0.1; go(); }
+        }; go();
+      }; img.src = url;
+    });
+  }
+
+  function getVal(id) {
+    const sel = document.getElementById(id).value;
+    const other = document.getElementById(id + '_other');
+    return (sel === 'อื่นๆ' && other) ? other.value.trim() : sel;
+  }
+
+  function getProblemValue(type, main) {
+    const typeOther = type === 'CW' ? document.getElementById('s_type_other').value.trim() : '';
+    const prefix = typeOther ? `[${typeOther}] ` : '';
+    if (type.startsWith('CI')) {
+      const site = getVal('s_site');
+      const points = getVal('s_points');
+      return `${prefix}[CI] ระบบ: ${main} | หน้างาน: ${site} | จุด: ${points}`;
+    } else {
+      const sub = getVal('s_sub');
+      return `${prefix}${main} > ${sub}`;
+    }
+  }
+
+  async function submitService() {
+    const trap = document.getElementById('bot_trap').value;
+    if (trap !== "") return;
+
+    const lastSubmit = localStorage.getItem('adv_service_time');
+    const now = new Date().getTime();
+    if (lastSubmit && now - parseInt(lastSubmit) < 60000) {
+      alert('⏳ คุณเพิ่งส่งข้อมูลไป กรุณารอ 1 นาทีก่อนส่งใหม่อีกครั้งครับ');
+      return;
+    }
+
+    const btn = document.getElementById('submitBtn');
+    const type = document.getElementById('s_type').value;
+    const main = getVal('s_main');
+    const channel = getVal('s_channel');
+    const rawPhone = document.getElementById('s_phone').value.trim();
+    const name = document.getElementById('s_name').value.trim();
+    const note = document.getElementById('s_note').value.trim();
+    const isInstall = (type || '').startsWith('CI');
+    // เบอร์โทรใส่รหัสนำหน้าแค่ 2 ตัวอักษร (CI/CS/CW/CH/CR) เหมือนระบบหลังบ้าน เช่น CS1 -> "CS"
+    const typePrefix = (type || '').replace(/[0-9]/g, '');
+    const phone = typePrefix + rawPhone;
+
+    document.querySelectorAll('.field-err').forEach(el => el.classList.remove('field-err'));
+    document.querySelectorAll('.err-msg').forEach(el => el.classList.remove('show-err'));
+
+    let isOk = true;
+    const markErr = (fieldId, errId) => {
+      document.getElementById(fieldId).classList.add('field-err');
+      document.getElementById(errId).classList.add('show-err');
+      isOk = false;
+    };
+
+    if (!type) markErr('s_type', 'err_type');
+    if (type === 'CW' && !document.getElementById('s_type_other').value.trim()) markErr('s_type_other', 'err_type_other');
+    if (!document.getElementById('s_main').value) markErr('s_main', 'err_main');
+    if (document.getElementById('s_main').value === 'อื่นๆ' && !document.getElementById('s_main_other').value.trim()) markErr('s_main_other', 'err_main_other');
+
+    if (isInstall) {
+      if (!document.getElementById('s_site').value) markErr('s_site', 'err_site');
+      if (document.getElementById('s_site').value === 'อื่นๆ' && !document.getElementById('s_site_other').value.trim()) markErr('s_site_other', 'err_site_other');
+      if (!document.getElementById('s_points').value) markErr('s_points', 'err_points');
+      if (document.getElementById('s_points').value === 'อื่นๆ' && !document.getElementById('s_points_other').value.trim()) markErr('s_points_other', 'err_points_other');
+    } else if (type) {
+      if (!document.getElementById('s_sub').value) markErr('s_sub', 'err_sub');
+      if (document.getElementById('s_sub').value === 'อื่นๆ' && !document.getElementById('s_sub_other').value.trim()) markErr('s_sub_other', 'err_sub_other');
+    }
+
+    if (!document.getElementById('s_channel').value) markErr('s_channel', 'err_channel');
+    if (document.getElementById('s_channel').value === 'อื่นๆ' && !document.getElementById('s_channel_other').value.trim()) markErr('s_channel_other', 'err_channel_other');
+    if (rawPhone.length !== 10) markErr('s_phone', 'err_phone');
+    if (!name) markErr('s_name', 'err_name');
+
+    if (!isOk) {
+      btn.style.animation = 'none'; setTimeout(() => btn.style.animation = 'shake 0.4s', 10);
+      return;
+    }
+
+    btn.innerHTML = '⏳ กำลังส่งข้อมูล...';
+    btn.disabled = true;
+
+    try {
+      let compressedImages = [];
+      if (selectedImages.length > 0) {
+        compressedImages = await Promise.all(selectedImages.map(f => compressImage(f)));
+      }
+
+      const problemText = getProblemValue(type, main);
+      await db.collection('customers').add({
+        name: name,
+        phone: phone,
+        type: type,
+        channel: channel,
+        problem: problemText,
+        progress: 'รอดำเนินการ',
+        action: problemText,
+        result: 'รอดำเนินการ',
+        cost: '0',
+        note: note,
+        submittedBy: 'ลูกค้า (หน้าเว็บ)',
+        images: { cc: compressedImages },
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      localStorage.setItem('adv_service_time', now.toString());
+      document.getElementById('formScreen').style.display = 'none';
+      document.getElementById('successScreen').style.display = 'block';
+    } catch (error) {
+      alert('⚠️ เกิดข้อผิดพลาดในการส่งข้อมูล: ' + error.message);
+      btn.innerHTML = 'ส่งข้อมูล';
+      btn.disabled = false;
+    }
+  }
+</script>
+</body>
+</html>
