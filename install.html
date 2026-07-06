@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>แจ้งซ่อม / ขอเข้ารับบริการ — Advance Plus</title>
+  <title>ขอติดตั้งระบบ — Advance Plus</title>
   <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -91,7 +91,7 @@
 <div class="card">
   <div id="formScreen">
     <div class="header">
-      <h1>แจ้งซ่อม / ขอเข้ารับบริการ</h1>
+      <h1>ขอติดตั้งระบบ</h1>
       <p>Advance Plus &bull; Green Energy Solutions</p>
     </div>
 
@@ -99,32 +99,24 @@
       <input type="text" id="bot_trap" class="honeypot" tabindex="-1" autocomplete="off">
 
       <div class="fg">
-        <label>ต้องการ <span class="req">*</span></label>
-        <select id="s_type" onchange="onTypeChange()">
-          <option value="" disabled selected>— เลือกสิ่งที่ต้องการ —</option>
-          <option value="CI1">ติดตั้งระบบใหม่ (มากกว่า 4 จุด) — CI1</option>
-          <option value="CI2">ติดตั้งระบบใหม่ (1-4 จุด) — CI2</option>
+        <label>ต้องการติดตั้ง <span class="req">*</span></label>
+        <select id="i_type" onchange="_clearErr('i_type')">
+          <option value="" disabled selected>— เลือกลักษณะงานติดตั้ง —</option>
+          <option value="CI1">ติดตั้งระบบ (มากกว่า 4 จุด) — CI1</option>
+          <option value="CI2">ติดตั้งระบบ (1-4 จุด) — CI2</option>
           <option value="CI3">ติดตั้งสแกนนิ้ว / สแกนใบหน้า / คีย์การ์ด — CI3</option>
-          <option value="CS1">แจ้งซ่อม / ขอบริการที่หน้างาน — CS1</option>
-          <option value="CS2">แจ้งซ่อม / ปรึกษาปัญหาออนไลน์ — CS2</option>
           <option value="CH">ลูกค้าช่าง (สั่งซื้อ/รับบริการแบบช่าง) — CH</option>
           <option value="CR">ลูกค้าปลีก / ลูกค้าส่ง (สั่งซื้ออุปกรณ์) — CR</option>
-          <option value="CW">อื่นๆ (ระบุเอง) — CW</option>
         </select>
         <div style="font-size:.72rem; color:var(--text-muted); margin-top:.4rem;">
-          CI = ติดตั้ง &nbsp;·&nbsp; CS = ซ่อม/บริการ &nbsp;·&nbsp; CH = ลูกค้าช่าง &nbsp;·&nbsp; CR = ปลีก/ส่ง &nbsp;·&nbsp; CW = อื่นๆ
+          CI1 = ติดตั้งจำนวนมาก &nbsp;·&nbsp; CI2 = ติดตั้งจำนวนน้อย &nbsp;·&nbsp; CI3 = ระบบสแกน/คีย์การ์ด &nbsp;·&nbsp; CH = ลูกค้าช่าง &nbsp;·&nbsp; CR = ปลีก/ส่ง
         </div>
-        <div class="err-msg" id="err_type">⚠ กรุณาเลือกสิ่งที่ต้องการ</div>
-      </div>
-      <div class="fg hidden" id="fg_type_other">
-        <label>ระบุสิ่งที่ต้องการ <span class="req">*</span></label>
-        <input type="text" id="s_type_other" placeholder="พิมพ์สิ่งที่ต้องการ...">
-        <div class="err-msg" id="err_type_other">⚠ กรุณาระบุสิ่งที่ต้องการ</div>
+        <div class="err-msg" id="err_type">⚠ กรุณาเลือกลักษณะงานติดตั้ง</div>
       </div>
 
       <div class="fg">
-        <label>ระบบ / อุปกรณ์ที่เกี่ยวข้อง <span class="req">*</span></label>
-        <select id="s_main" onchange="onMainChange()">
+        <label>ระบบ / อุปกรณ์ที่ต้องการติดตั้ง <span class="req">*</span></label>
+        <select id="i_main" onchange="onMainChange()">
           <option value="" disabled selected>— เลือกระบบ —</option>
           <option>กล้อง Digital</option>
           <option>กล้อง Analog</option>
@@ -137,56 +129,37 @@
       </div>
       <div class="fg hidden" id="fg_main_other">
         <label>ระบุระบบ / อุปกรณ์ <span class="req">*</span></label>
-        <input type="text" id="s_main_other" placeholder="พิมพ์ชื่อระบบ / อุปกรณ์...">
+        <input type="text" id="i_main_other" placeholder="พิมพ์ชื่อระบบ / อุปกรณ์...">
         <div class="err-msg" id="err_main_other">⚠ กรุณาระบุระบบ / อุปกรณ์</div>
       </div>
 
-      <!-- ติดตั้ง (CI) -->
-      <div id="grp_install" class="hidden">
-        <div class="fg">
-          <label>ลักษณะหน้างาน <span class="req">*</span></label>
-          <input type="text" id="s_site" placeholder="เช่น บ้านเดี่ยว, คอนโด, ออฟฟิศ, โกดัง, ไซต์งาน..." oninput="_clearErr('s_site')">
-          <div class="err-msg" id="err_site">⚠ กรุณาระบุลักษณะหน้างาน</div>
-        </div>
-
-        <div class="fg">
-          <label>จำนวนจุด <span class="req">*</span></label>
-          <select id="s_points" onchange="onPointsChange()">
-            <option value="" disabled selected>— เลือกจำนวนจุด —</option>
-            <option>1</option><option>2</option><option>3</option><option>4</option>
-            <option>5</option><option>6</option><option>8</option><option>10</option>
-            <option>12</option><option>16</option><option>20</option><option>24</option>
-            <option>32</option><option value="อื่นๆ">อื่นๆ (ระบุเอง)</option>
-          </select>
-          <div class="err-msg" id="err_points">⚠ กรุณาเลือกจำนวนจุด</div>
-        </div>
-        <div class="fg hidden" id="fg_points_other">
-          <label>ระบุจำนวนจุด <span class="req">*</span></label>
-          <input type="text" id="s_points_other" placeholder="พิมพ์จำนวนจุด..." inputmode="numeric">
-          <div class="err-msg" id="err_points_other">⚠ กรุณาระบุจำนวนจุด</div>
-        </div>
+      <div class="fg">
+        <label>ลักษณะหน้างาน <span class="req">*</span></label>
+        <input type="text" id="i_site" placeholder="เช่น บ้านเดี่ยว, คอนโด, ออฟฟิศ, โกดัง, ไซต์งาน..." oninput="_clearErr('i_site')">
+        <div class="err-msg" id="err_site">⚠ กรุณาระบุลักษณะหน้างาน</div>
       </div>
 
-      <!-- ซ่อม/บริการ (CS/CW) -->
-      <div id="grp_service" class="hidden">
-        <div class="fg">
-          <label>ปัญหา / อาการ <span class="req">*</span></label>
-          <select id="s_sub" onchange="onSubChange()">
-            <option value="" disabled selected>— เลือกระบบก่อน —</option>
-          </select>
-          <div class="err-msg" id="err_sub">⚠ กรุณาเลือกปัญหา / อาการ</div>
-        </div>
-        <div class="fg hidden" id="fg_sub_other">
-          <label>ระบุปัญหา / อาการ <span class="req">*</span></label>
-          <input type="text" id="s_sub_other" placeholder="พิมพ์อาการ / ปัญหา...">
-          <div class="err-msg" id="err_sub_other">⚠ กรุณาระบุปัญหา / อาการ</div>
-        </div>
+      <div class="fg">
+        <label>จำนวนจุด <span class="req">*</span></label>
+        <select id="i_points" onchange="onPointsChange()">
+          <option value="" disabled selected>— เลือกจำนวนจุด —</option>
+          <option>1</option><option>2</option><option>3</option><option>4</option>
+          <option>5</option><option>6</option><option>8</option><option>10</option>
+          <option>12</option><option>16</option><option>20</option><option>24</option>
+          <option>32</option><option value="อื่นๆ">อื่นๆ (ระบุเอง)</option>
+        </select>
+        <div class="err-msg" id="err_points">⚠ กรุณาเลือกจำนวนจุด</div>
+      </div>
+      <div class="fg hidden" id="fg_points_other">
+        <label>ระบุจำนวนจุด <span class="req">*</span></label>
+        <input type="text" id="i_points_other" placeholder="พิมพ์จำนวนจุด..." inputmode="numeric">
+        <div class="err-msg" id="err_points_other">⚠ กรุณาระบุจำนวนจุด</div>
       </div>
 
       <div class="grid-2">
         <div class="fg">
           <label>ช่องทางการติดต่อ <span class="req">*</span></label>
-          <select id="s_channel" onchange="onChannelChange()">
+          <select id="i_channel" onchange="onChannelChange()">
             <option value="" disabled selected>— เลือกช่องทาง —</option>
             <option value="หน้าร้าน">หน้าร้าน</option>
             <option value="Facebook">Facebook</option>
@@ -198,44 +171,44 @@
         </div>
         <div class="fg">
           <label>เบอร์โทรศัพท์ <span class="req">*</span> <span id="count_phone" style="float:right; font-size:0.75rem; color:#ef4444; font-weight:bold;">0/10</span></label>
-          <input type="text" id="s_phone" placeholder="0XXXXXXXXX" maxlength="10" inputmode="numeric">
+          <input type="text" id="i_phone" placeholder="0XXXXXXXXX" maxlength="10" inputmode="numeric">
           <div class="err-msg" id="err_phone">⚠ กรุณาระบุเบอร์โทรศัพท์ให้ครบ 10 หลัก</div>
         </div>
       </div>
       <div class="fg hidden" id="fg_channel_other">
         <label>ระบุช่องทางการติดต่อ <span class="req">*</span></label>
-        <input type="text" id="s_channel_other" placeholder="พิมพ์ช่องทางการติดต่อ...">
+        <input type="text" id="i_channel_other" placeholder="พิมพ์ช่องทางการติดต่อ...">
         <div class="err-msg" id="err_channel_other">⚠ กรุณาระบุช่องทางการติดต่อ</div>
       </div>
 
       <div class="fg">
         <label>ชื่อ - นามสกุล <span class="req">*</span></label>
-        <input type="text" id="s_name" placeholder="ชื่อผู้ติดต่อ" autocomplete="name">
+        <input type="text" id="i_name" placeholder="ชื่อผู้ติดต่อ" autocomplete="name">
         <div class="err-msg" id="err_name">⚠ กรุณาระบุชื่อ</div>
       </div>
 
       <div class="fg">
         <label>รายละเอียดเพิ่มเติม <span class="opt">(ไม่บังคับ)</span></label>
-        <textarea id="s_note" placeholder="อธิบายเพิ่มเติม เช่น เวลาที่สะดวกให้เข้าไปดูหน้างาน, จุดสังเกตของสถานที่..."></textarea>
+        <textarea id="i_note" placeholder="อธิบายเพิ่มเติม เช่น เวลาที่สะดวกให้เข้าไปดูหน้างาน, จุดสังเกตของสถานที่..."></textarea>
       </div>
 
       <div class="fg">
-        <label>แนบรูปภาพ <span class="opt">(ไม่บังคับ สูงสุด 5 รูป)</span></label>
-        <div class="upload-area" onclick="document.getElementById('s_images').click()">
-          📷 แตะเพื่อเลือกรูปภาพ (เช่น รูปหน้างาน, รูปอุปกรณ์ที่มีปัญหา)
+        <label>แนบรูปภาพหน้างาน <span class="opt">(ไม่บังคับ สูงสุด 5 รูป)</span></label>
+        <div class="upload-area" onclick="document.getElementById('i_images').click()">
+          📷 แตะเพื่อเลือกรูปภาพ (เช่น รูปหน้างานที่ต้องการติดตั้ง)
         </div>
-        <input type="file" id="s_images" accept="image/*" multiple class="hidden" onchange="handleImageSelection(this)">
-        <div class="preview-zone" id="s_preview"></div>
+        <input type="file" id="i_images" accept="image/*" multiple class="hidden" onchange="handleImageSelection(this)">
+        <div class="preview-zone" id="i_preview"></div>
       </div>
 
-      <button class="btn" id="submitBtn" onclick="submitService()">ส่งข้อมูล</button>
+      <button class="btn" id="submitBtn" onclick="submitInstall()">ส่งข้อมูล</button>
     </div>
   </div>
 
   <div class="success-screen" id="successScreen">
     <div class="success-icon">✅</div>
     <h2>ส่งข้อมูลเรียบร้อยแล้ว</h2>
-    <p>ขอบคุณครับ ทีมงาน Advance Plus ได้รับข้อมูลของคุณแล้ว<br>เจ้าหน้าที่จะติดต่อกลับโดยเร็วที่สุด</p>
+    <p>ขอบคุณครับ ทีมงาน Advance Plus ได้รับคำขอติดตั้งของคุณแล้ว<br>เจ้าหน้าที่จะติดต่อกลับโดยเร็วที่สุด</p>
     <button class="btn-back" onclick="location.reload()">ส่งข้อมูลอีกครั้ง</button>
   </div>
 </div>
@@ -253,75 +226,30 @@
   });
   const db = firebase.firestore();
 
-  document.getElementById('s_phone').addEventListener('input', function () {
+  document.getElementById('i_phone').addEventListener('input', function () {
     this.value = this.value.replace(/\D/g, '').slice(0, 10);
     document.getElementById('count_phone').innerText = this.value.length + '/10';
     document.getElementById('count_phone').style.color = this.value.length === 10 ? '#16a34a' : '#ef4444';
   });
 
-  // ── หัวข้อปัญหา ตามระบบที่เลือก (เหมือนระบบหลังบ้าน) ──
-  const SUB_CATS = {
-    'กล้อง Digital': ['กล้องดับ (น้อยกว่า 4 ตัว)','กล้องดับ (มากกว่า 4 ตัว)','กล้องเสีย','กล้องมีเสียงร้อง','กล้องติดๆ ดับๆ','กล้องไม่ออนไลน์','ดูย้อนหลังไม่ได้','ภาพเบลอ','สัญญาณหลุด','ภาพไม่ขึ้น'],
-    'กล้อง Analog':  ['กล้องดับ (น้อยกว่า 4 ตัว)','กล้องดับ (มากกว่า 4 ตัว)','กล้องเสีย','กล้องมีเสียงร้อง','กล้องติดๆ ดับๆ','กล้องไม่ออนไลน์','ดูย้อนหลังไม่ได้','ภาพเบลอ','สัญญาณหลุด','สัญญาณรบกวน'],
-    'เครื่องบันทึก NVR': ['ไฟไม่ขึ้น','เครื่องพัง','HDD Error','Adapter เสีย','สาย SATA มีปัญหา','บันทึกไม่ได้','ภาพไม่แสดง'],
-    'ระบบ Network':  ['อินเทอร์เน็ตขัดข้อง','สัญญาณ Wi-Fi หลุด','อุปกรณ์ไม่ออนไลน์','Port / Switch เสีย'],
-    'เครื่องสแกนนิ้วมือ': ['สแกนนิ้ว / สแกนใบหน้าไม่ผ่าน', 'เครื่องดับ / เปิดไม่ติด / ไม่มีไฟเข้า', 'ดึงข้อมูลเวลาไม่ได้ / หลุดเครือข่าย LAN', 'กลอนแม่เหล็กประตูไม่ล็อค / ประตูล็อคค้าง', 'ปุ่มกดออก (Exit Switch) ไม่ทำงาน', 'ทาบการ์ด / คีย์การ์ดไม่ทำงาน'],
-    'อื่นๆ': ['แจ้งซ่อมทั่วไป', 'สอบถามข้อมูล', 'ขอใบเสนอราคา', 'สั่งซื้ออุปกรณ์เพิ่ม']
-  };
-
   function _show(id, on) { document.getElementById(id).classList.toggle('hidden', !on); }
   function _clearErr(id) {
-    const el = document.getElementById(id), err = document.getElementById('err_' + id.replace('s_',''));
+    const el = document.getElementById(id), err = document.getElementById('err_' + id.replace('i_', ''));
     if (el) el.classList.remove('field-err');
     if (err) err.classList.remove('show-err');
   }
 
-  function onTypeChange() {
-    _clearErr('s_type');
-    const val = document.getElementById('s_type').value;
-    const isInstall = val.startsWith('CI');
-    _show('grp_install', isInstall);
-    _show('grp_service', !isInstall);
-    _show('fg_type_other', val === 'CW');
-    // รีเซ็ตตัวเลือกฝั่งที่ซ่อนไว้
-    if (isInstall) {
-      document.getElementById('s_sub').innerHTML = '<option value="" disabled selected>— เลือกระบบก่อน —</option>';
-    } else {
-      document.getElementById('s_site').value = '';
-      document.getElementById('s_points').value = '';
-      _show('fg_points_other', false);
-    }
-    // เผื่อผู้ใช้เลือกระบบไว้ก่อนแล้ว ให้ rebuild sub list
-    onMainChange(true);
+  function onMainChange() {
+    _clearErr('i_main');
+    _show('fg_main_other', document.getElementById('i_main').value === 'อื่นๆ');
   }
-
-  function onChannelChange() {
-    _clearErr('s_channel');
-    _show('fg_channel_other', document.getElementById('s_channel').value === 'อื่นๆ');
-  }
-
-  function onMainChange(skipClear) {
-    if (!skipClear) _clearErr('s_main');
-    const val = document.getElementById('s_main').value;
-    _show('fg_main_other', val === 'อื่นๆ');
-
-    const type = document.getElementById('s_type').value;
-    if (type && !type.startsWith('CI')) {
-      const subSel = document.getElementById('s_sub');
-      const list = SUB_CATS[val] || SUB_CATS['อื่นๆ'];
-      subSel.innerHTML = '<option value="" disabled selected>— เลือกปัญหา / อาการ —</option>' +
-        list.map(x => `<option>${x}</option>`).join('') +
-        '<option value="อื่นๆ">อื่นๆ (ระบุเอง)</option>';
-    }
-  }
-
   function onPointsChange() {
-    _clearErr('s_points');
-    _show('fg_points_other', document.getElementById('s_points').value === 'อื่นๆ');
+    _clearErr('i_points');
+    _show('fg_points_other', document.getElementById('i_points').value === 'อื่นๆ');
   }
-  function onSubChange() {
-    _clearErr('s_sub');
-    _show('fg_sub_other', document.getElementById('s_sub').value === 'อื่นๆ');
+  function onChannelChange() {
+    _clearErr('i_channel');
+    _show('fg_channel_other', document.getElementById('i_channel').value === 'อื่นๆ');
   }
 
   let selectedImages = [];
@@ -340,7 +268,7 @@
     renderPreviews();
   }
   function renderPreviews() {
-    const container = document.getElementById('s_preview'); container.innerHTML = '';
+    const container = document.getElementById('i_preview'); container.innerHTML = '';
     selectedImages.forEach((file, index) => {
       const url = URL.createObjectURL(file);
       const div = document.createElement('div'); div.className = 'thumb-wrapper';
@@ -373,24 +301,11 @@
     return (sel === 'อื่นๆ' && other) ? other.value.trim() : sel;
   }
 
-  function getProblemValue(type, main) {
-    const typeOther = type === 'CW' ? document.getElementById('s_type_other').value.trim() : '';
-    const prefix = typeOther ? `[${typeOther}] ` : '';
-    if (type.startsWith('CI')) {
-      const site = getVal('s_site');
-      const points = getVal('s_points');
-      return `${prefix}[CI] ระบบ: ${main} | หน้างาน: ${site} | จุด: ${points}`;
-    } else {
-      const sub = getVal('s_sub');
-      return `${prefix}${main} > ${sub}`;
-    }
-  }
-
-  async function submitService() {
+  async function submitInstall() {
     const trap = document.getElementById('bot_trap').value;
     if (trap !== "") return;
 
-    const lastSubmit = localStorage.getItem('adv_service_time');
+    const lastSubmit = localStorage.getItem('adv_install_time');
     const now = new Date().getTime();
     if (lastSubmit && now - parseInt(lastSubmit) < 60000) {
       alert('⏳ คุณเพิ่งส่งข้อมูลไป กรุณารอ 1 นาทีก่อนส่งใหม่อีกครั้งครับ');
@@ -398,14 +313,14 @@
     }
 
     const btn = document.getElementById('submitBtn');
-    const type = document.getElementById('s_type').value;
-    const main = getVal('s_main');
-    const channel = getVal('s_channel');
-    const rawPhone = document.getElementById('s_phone').value.trim();
-    const name = document.getElementById('s_name').value.trim();
-    const note = document.getElementById('s_note').value.trim();
-    const isInstall = (type || '').startsWith('CI');
-    // เบอร์โทรใส่รหัสนำหน้าแค่ 2 ตัวอักษร (CI/CS/CW/CH/CR) เหมือนระบบหลังบ้าน เช่น CS1 -> "CS"
+    const type = document.getElementById('i_type').value;
+    const main = getVal('i_main');
+    const site = getVal('i_site');
+    const points = getVal('i_points');
+    const rawPhone = document.getElementById('i_phone').value.trim();
+    const name = document.getElementById('i_name').value.trim();
+    const note = document.getElementById('i_note').value.trim();
+    // เบอร์โทรใส่รหัสนำหน้าแค่ 2 ตัวอักษร (CI) เหมือนระบบหลังบ้าน เช่น CI1 -> "CI"
     const typePrefix = (type || '').replace(/[0-9]/g, '');
     const phone = typePrefix + rawPhone;
 
@@ -419,24 +334,16 @@
       isOk = false;
     };
 
-    if (!type) markErr('s_type', 'err_type');
-    if (type === 'CW' && !document.getElementById('s_type_other').value.trim()) markErr('s_type_other', 'err_type_other');
-    if (!document.getElementById('s_main').value) markErr('s_main', 'err_main');
-    if (document.getElementById('s_main').value === 'อื่นๆ' && !document.getElementById('s_main_other').value.trim()) markErr('s_main_other', 'err_main_other');
-
-    if (isInstall) {
-      if (!document.getElementById('s_site').value.trim()) markErr('s_site', 'err_site');
-      if (!document.getElementById('s_points').value) markErr('s_points', 'err_points');
-      if (document.getElementById('s_points').value === 'อื่นๆ' && !document.getElementById('s_points_other').value.trim()) markErr('s_points_other', 'err_points_other');
-    } else if (type) {
-      if (!document.getElementById('s_sub').value) markErr('s_sub', 'err_sub');
-      if (document.getElementById('s_sub').value === 'อื่นๆ' && !document.getElementById('s_sub_other').value.trim()) markErr('s_sub_other', 'err_sub_other');
-    }
-
-    if (!document.getElementById('s_channel').value) markErr('s_channel', 'err_channel');
-    if (document.getElementById('s_channel').value === 'อื่นๆ' && !document.getElementById('s_channel_other').value.trim()) markErr('s_channel_other', 'err_channel_other');
-    if (rawPhone.length !== 10) markErr('s_phone', 'err_phone');
-    if (!name) markErr('s_name', 'err_name');
+    if (!type) markErr('i_type', 'err_type');
+    if (!document.getElementById('i_main').value) markErr('i_main', 'err_main');
+    if (document.getElementById('i_main').value === 'อื่นๆ' && !document.getElementById('i_main_other').value.trim()) markErr('i_main_other', 'err_main_other');
+    if (!document.getElementById('i_site').value.trim()) markErr('i_site', 'err_site');
+    if (!document.getElementById('i_points').value) markErr('i_points', 'err_points');
+    if (document.getElementById('i_points').value === 'อื่นๆ' && !document.getElementById('i_points_other').value.trim()) markErr('i_points_other', 'err_points_other');
+    if (!document.getElementById('i_channel').value) markErr('i_channel', 'err_channel');
+    if (document.getElementById('i_channel').value === 'อื่นๆ' && !document.getElementById('i_channel_other').value.trim()) markErr('i_channel_other', 'err_channel_other');
+    if (rawPhone.length !== 10) markErr('i_phone', 'err_phone');
+    if (!name) markErr('i_name', 'err_name');
 
     if (!isOk) {
       btn.style.animation = 'none'; setTimeout(() => btn.style.animation = 'shake 0.4s', 10);
@@ -452,7 +359,9 @@
         compressedImages = await Promise.all(selectedImages.map(f => compressImage(f)));
       }
 
-      const problemText = getProblemValue(type, main);
+      const channel = getVal('i_channel');
+      const problemText = `[CI] ระบบ: ${main} | หน้างาน: ${site} | จุด: ${points}`;
+
       await db.collection('customers').add({
         name: name,
         phone: phone,
@@ -469,7 +378,7 @@
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
       });
 
-      localStorage.setItem('adv_service_time', now.toString());
+      localStorage.setItem('adv_install_time', now.toString());
       document.getElementById('formScreen').style.display = 'none';
       document.getElementById('successScreen').style.display = 'block';
     } catch (error) {
@@ -480,4 +389,4 @@
   }
 </script>
 </body>
-</html>
+</html> 
