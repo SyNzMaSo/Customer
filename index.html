@@ -128,15 +128,20 @@
 
       <div class="fg">
         <label>ระบบที่สนใจให้ประเมินราคา <span class="req">*</span></label>
-        <select id="q_system">
+        <select id="q_system" onchange="onSystemChange()">
           <option value="" disabled selected>— เลือกระบบที่สนใจ —</option>
           <option value="กล้องวงจรปิด (CCTV)">กล้องวงจรปิด (CCTV)</option>
           <option value="สแกนนิ้วมือ / สแกนใบหน้า">สแกนนิ้วมือ / สแกนใบหน้า</option>
           <option value="ระบบประตูแม่เหล็กไฟฟ้า">ระบบประตูแม่เหล็ก (Access Control)</option>
           <option value="ระบบ Network / เดินสาย LAN">ระบบ Network / เดินสาย LAN</option>
-          <option value="อื่นๆ (โปรดระบุในรายละเอียด)">อื่นๆ</option>
+          <option value="อื่นๆ">อื่นๆ (ระบุเอง)</option>
         </select>
         <div class="err-msg" id="err_system">⚠ กรุณาเลือกระบบที่สนใจ</div>
+      </div>
+      <div class="fg" id="fg_system_other" style="display:none;">
+        <label>ระบุระบบที่สนใจ <span class="req">*</span></label>
+        <input type="text" id="q_system_other" placeholder="พิมพ์ระบบที่สนใจ...">
+        <div class="err-msg" id="err_system_other">⚠ กรุณาระบุระบบที่สนใจ</div>
       </div>
 
       <div class="grid-2">
@@ -201,6 +206,11 @@
   document.getElementById('q_tax').addEventListener('input', function() {
     this.value = this.value.replace(/\D/g, '').slice(0, 13);
   });
+
+  function onSystemChange() {
+    const val = document.getElementById('q_system').value;
+    document.getElementById('fg_system_other').style.display = (val === 'อื่นๆ') ? 'block' : 'none';
+  }
   
   // ให้กรอกเบอร์โทรได้เฉพาะตัวเลขเหมือนกัน
   document.getElementById('q_phone').addEventListener('input', function() {
@@ -268,7 +278,8 @@
     const tax = document.getElementById('q_tax').value.trim();
     const channel = document.getElementById('q_channel').value;
     const phone = document.getElementById('q_phone').value.trim();
-    const system = document.getElementById('q_system').value;
+    const systemSel = document.getElementById('q_system').value;
+    const system = (systemSel === 'อื่นๆ') ? document.getElementById('q_system_other').value.trim() : systemSel;
     const site = document.getElementById('q_site').value.trim();
     const points = document.getElementById('q_points').value;
     const detail = document.getElementById('q_detail').value.trim();
@@ -293,7 +304,8 @@
         isOk = false; 
     }
 
-    if (!system) { document.getElementById('q_system').classList.add('field-err'); document.getElementById('err_system').classList.add('show-err'); isOk = false; }
+    if (!systemSel) { document.getElementById('q_system').classList.add('field-err'); document.getElementById('err_system').classList.add('show-err'); isOk = false; }
+    if (systemSel === 'อื่นๆ' && !system) { document.getElementById('q_system_other').classList.add('field-err'); document.getElementById('err_system_other').classList.add('show-err'); isOk = false; }
     if (!site) { document.getElementById('q_site').classList.add('field-err'); document.getElementById('err_site').classList.add('show-err'); isOk = false; }
     if (!points) { document.getElementById('q_points').classList.add('field-err'); document.getElementById('err_points').classList.add('show-err'); isOk = false; }
     if (!detail) { document.getElementById('q_detail').classList.add('field-err'); document.getElementById('err_detail').classList.add('show-err'); isOk = false; }
@@ -329,7 +341,7 @@
       document.getElementById('formScreen').style.display = 'none';
       document.getElementById('successScreen').style.display = 'block';
     } catch (error) {
-      alert('⚠️ เกิดข้อผิดพลาดในการส่งข้อมูล: ' + error.message);
+      alert('⚠️ เกิดข้อผิดพลาดในการส่งข้อมูล: ' + error.message); 
       btn.innerHTML = 'ส่งข้อมูลขอใบเสนอราคา';
       btn.disabled = false;
     }
