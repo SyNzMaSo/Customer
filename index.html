@@ -102,7 +102,7 @@
       </div>
 
       <div class="fg">
-        <label>เลขประจำตัวผู้เสียภาษี <span class="req">*</span> <span id="count_tax" style="float:right; font-size:0.75rem; color:#ef4444; font-weight:bold;">0/13</span></label>
+        <label>เลขประจำตัวผู้เสียภาษี <span class="opt">(ไม่บังคับ)</span> <span id="count_tax" style="float:right; font-size:0.75rem; color:#ef4444; font-weight:bold;">0/13</span></label>
         <input type="text" id="q_tax" placeholder="ระบุเลข 13 หลัก" maxlength="13" inputmode="numeric" oninput="document.getElementById('count_tax').innerText = this.value.length + '/13'; document.getElementById('count_tax').style.color = this.value.length === 13 ? '#16a34a' : '#ef4444';">
         <div class="err-msg" id="err_tax">⚠ กรุณาระบุเลขประจำตัวผู้เสียภาษีให้ครบ 13 หลัก</div>
       </div>
@@ -290,7 +290,7 @@
     let isOk = true;
     if (!name) { document.getElementById('q_name').classList.add('field-err'); document.getElementById('err_name').classList.add('show-err'); isOk = false; }
     
-    if (tax.length !== 13) { 
+    if (tax.length > 0 && tax.length !== 13) { 
         document.getElementById('q_tax').classList.add('field-err'); 
         document.getElementById('err_tax').classList.add('show-err'); 
         isOk = false; 
